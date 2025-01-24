@@ -1,0 +1,80 @@
+
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+}
+
+
+group = mod_group_id
+version = "0.3.11.2-1.16.5"
+version = "0.3.11.${System.getenv('GITHUB_RUN_NUMBER') ?: '1.0.3.DEV'}"
+archivesBaseName = "CITForge"
+
+apply plugin: 'java'
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+minecraft {
+
+    //mappings channel: mapping_channel, version: mapping_version
+    mappings channel: mapping_channel, version: mapping_version
+
+    copyIdeResources = true
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven { url = 'https://files.minecraftforge.net/maven' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = "https://www.cursemaven.com"}
+
+    mavenCentral()
+     flatDir {
+         dir 'lib'
+     }
+}
+
+dependencies {
+     //minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    //compileOnly(fileTree(dir: 'lib', include: '*.jar'))
+    //compileOnly(group: 'com.tac', name: 'damageindicator', version: '')
+    //compileOnly fg.deobf('ru.nitdroid:voicechat:forge-1.20.1-2.5.19')
+    compileOnly ('ru.nitdroid:citreforged:mc1.20.1-1.0.2')
+    //compileOnly(group: 'com.hamusuke', name: 'damageindicator', version: '1_dev')
+
+    // Зависимость для плагина WorldGuard
+   // implementation 'ru.nitdroid.eventhelper:EvenHelper1.16.5:0.0.4'
+}
+
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from zipTree('lib/citreforged-mc1.20.1-1.0.2.jar')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+//tasks.named('jar', Jar).configure {
+//    manifest {
+//        attributes([
+//                "Manifest-Version"          : "1.0",
+//                "Specification-Title"       : "Simple Voice Chat",
+//                "Specification-Vendor"      : "Max Henkel",
+//                "Specification-Version"     : "1",
+//                "Implementation-Title"      : "Simple Voice Chat",
+//                "Implementation-Version"    : "1.20.1-2.5.19",
+//                "Implementation-Vendor"     : "Max Henkel",
+//                "Implementation-Timestamp"  : "2024-07-10T10:52:51+0200",
+//                "Class-Path"                : "voicechat-api-2.5.0.jar voicechat-fabric-1.20.1-2.5.19-dev.jar configbuilder-2.0.1.jar Concentus-1.0-SNAPSHOT.jar opus4j-2.0.2.jar rnnoise4j-2.0.2.jar lame4j-2.0.3.jar"
+//        ])
+//    }
+//
+//    finalizedBy 'reobfJar'
+//}
+
